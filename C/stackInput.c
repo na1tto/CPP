@@ -1,17 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
+#include <string.h>
 
 // Hoje vamos aprender como a estrutura de dados Pilha funciona, na linguagem C!
 
 typedef struct No{ // node
-    char* nome;
+    char nome[30];
     int idade;
     struct No* next;
 }No;
 No* criarNo(char* novoNome, int novaIdade){
     No* novoNo = (No*)malloc(sizeof(No));
-    novoNo->nome = novoNome;
+    strcpy(novoNo->nome, novoNome);
     novoNo->idade = novaIdade;
     novoNo->next = NULL;
 
@@ -90,11 +91,21 @@ int main(){
     Pilha pilha;
     initPilha(&pilha);
 
-    // vamos inserir elementos na pilha
-    push(&pilha, "Joao", 11);
-    push(&pilha, "Pedro", 22);
-    push(&pilha, "Maria", 33);
-    push(&pilha, "Alan", 44);
+    char nome[30];
+    int idade;
+    int limite = 0;
+
+    printf("Bem vindo(a) a inicializacao da nossa Pilha!\nQuantos elementos deseja inserir?\n");
+    scanf("%d", &limite);
+
+    for(int i = 0; i < limite; i++){
+        printf("Insira os dados do elemento %d\n", i);
+        printf("Insira o nome do usuario: ");
+        scanf("%s", nome);
+        printf("Insira a idade do usuario: ");
+        scanf("%d", &idade);
+        push(&pilha, nome, idade);
+    }
 
     // vamos printar o elemento do topo da pilha (deve ser o ultimo que inserimos, seguindo a lógica)
     printf("O elemento do topo da sua pilha eh %d\n", peek(&pilha));
@@ -102,16 +113,16 @@ int main(){
     // vamos vizualizar toda a nossa pilha
     verPilha(&pilha);
 
-    // agora vamos remover dois elementos do topo
-    printf("Removendo dois elementos...\n");
-    pop(&pilha);
-    pop(&pilha);
+    // // agora vamos remover dois elementos do topo
+    // printf("Removendo dois elementos...\n");
+    // pop(&pilha);
+    // pop(&pilha);
 
-    // vamos conferir o elemento que ficou no topo
-    printf("O novo elemento do topo da sua pilha eh %d\n", peek(&pilha));
-        
-    // vamos vizualizar toda a nossa pilha (denovo:D)
-    verPilha(&pilha);
+    // // vamos conferir o elemento que ficou no topo
+    // printf("O novo elemento do topo da sua pilha eh %d\n", peek(&pilha));
+
+    // // vamos vizualizar toda a nossa pilha (denovo:D)
+    // verPilha(&pilha);
 
     return 0;
 }
