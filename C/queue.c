@@ -1,23 +1,27 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct No No;
-typedef struct Fila Fila;
-void printQueue(Fila* f);
-
-struct No{
+typedef struct No {
     int dado;
     struct No* prox;
-};
+} No;
 
-struct Fila{
+typedef struct Fila {
     No* frente;
     No* post;
-};
+} Fila;
+
+No* criarNo(int novoDado);
+Fila* criarFila();
+int estaVazia(Fila* f);
+void enqueue(Fila* f, int novoDado);
+void dequeue(Fila* f);
+void printQueue(Fila* f);
 
 No* criarNo(int novoDado){
     No* novoNo = (No*)malloc(sizeof(No));
     novoNo->dado = novoDado;
+    novoNo->prox = NULL;
     return novoNo;
 }
 
@@ -28,18 +32,17 @@ Fila* criarFila(){
 }
 
 int estaVazia(Fila* f){
-    return f->post == NULL;
+    return f->frente == NULL;
 }
 
 void enqueue(Fila* f, int novoDado){
     No* novoNo = criarNo(novoDado);
-    if(estaVazia(f)){
-        f->frente = f->post = NULL;
-        printQueue(f);
-        return;
+    if (estaVazia(f)) {
+        f->frente = f->post = novoNo;
+    } else {
+        f->post->prox = novoNo;
+        f->post = novoNo;
     }
-    f->post->prox = novoNo;
-    f->post = novoNo;
     printQueue(f);
 }
 
@@ -49,29 +52,30 @@ void dequeue(Fila* f){
     }
     No* temp = f->frente;
     f->frente = f->frente->prox;
-    if(f->frente == NULL) f->post = NULL;
+    if (f->frente == NULL) {
+        f->post = NULL;
+    }
     free(temp);
     printQueue(f);
 }
 
 void printQueue(Fila* f){
     if (estaVazia(f)){
-        printf("A sua fila esta vazia\n");
+        printf("A sua fila está vazia\n");
         return;
     }
 
     No* temp = f->frente;
     printf("Fila Atual:\n");
-    while(temp!=NULL){
-        printf("%d", temp->dado);
+    while (temp != NULL) {
+        printf("%d ", temp->dado);
         temp = temp->prox;
     }
     printf("\n");
 }
 
 int main(){
-
-    struct Fila* f = criarFila();
+    Fila* f = criarFila();
 
     enqueue(f, 10);
     enqueue(f, 20);
