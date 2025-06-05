@@ -1,4 +1,6 @@
 /*
+BEECROWD | 3139
+
 - Morgana é streamer e quer entrar no programa de parceria da plataforma
 - para entrar é necessário um determinado número de inscritos no canal
 - Morgana percebeu que todos os dias ganha, em quantidade de inscrições,
@@ -19,39 +21,48 @@
 
 - mostrar em quantos dias ela irá alcançar a meta de inscricoes para entrar
   no programa de parceria
---------NAO ESTA RESOLVIDO AINDA--------
 */
 
 #include <iostream>
+#include <cmath>
+#include <queue>
 
 using namespace std;
 
-int main(){
-  // testando a aceleração de leitura do c++
+int main() {
   ios::sync_with_stdio(false);
   cin.tie(0);
 
-  int n = 0, m = 0, d = 0, somatorio = 0, qntDias = 0;
-  double media = 0.0;
+  int n, m;
   cin >> n >> m;
 
-  for (int i=0; i<30; i++){
+  queue<int> ultimos30dias;
+  int soma = 0;
+
+  for (int i = 0; i < 30; i++) {
+    int d;
     cin >> d;
-    somatorio += d;
-    //printf("%d\n", somatorio);
+    ultimos30dias.push(d);
+    soma += d;
   }
 
-  media = (somatorio/30);
-  int mediaInt = static_cast<int>(media);
+  int dias = 0;
 
-  //printf("Quantidade de novos inscritos: %d\nQuantidade media de inscritos nos ultimos 30 dias %.2f\n", somatorio, media);
+  while (n < m) {
+    double media = soma / 30.0;
+    int ganho = ceil(media);
 
-  while(n < m){
-     n += mediaInt;
-     qntDias++;
-     //printf("Qnt. inscritos: %d/%d \nQnt. dias: %d\n", n,m,qntDias);
-   }
-   cout << qntDias << "\n";
+    n += ganho;
+    dias++;
+
+    // Atualiza janela deslizante
+    soma -= ultimos30dias.front();
+    ultimos30dias.pop();
+    soma += ganho;
+    ultimos30dias.push(ganho);
+  }
+
+  cout << dias << "\n";
 
   return 0;
 }
