@@ -15,7 +15,8 @@ using namespace std;
 ------Entradas------
 
 - um inteiro N, sendo 2 <= N <= 10^4, representando o numero de participantes, em seguida, ira receber N entradas
-  que correspondem ao numero de votos de cada um
+  que correspondem ao numero de votos de cada um, a PRIMEIRA entrada após N SEMPRE será de carlos, pois foi o pri
+  meiro a se inscrever
 */ 
 
 
