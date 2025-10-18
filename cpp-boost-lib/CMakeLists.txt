@@ -6,20 +6,45 @@ project(MeuProjetoBoost CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# --- CONFIGURAÇÃO DE LINKAGEM ESTÁTICA ---
+# Embutir as bibliotecas padrão do C++ e do GCC.
+set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
+
 # Dica para o CMake encontrar pacotes no MSYS2.
 if(MINGW)
     set(CMAKE_PREFIX_PATH "C:/msys64/ucrt64")
 endif()
 
-# Encontra a biblioteca Boost usando o módulo de busca antigo "FindBoost.cmake".
-find_package(Boost REQUIRED COMPONENTS asio)
+# --- ENCONTRAR DEPENDÊNCIAS ---
+# Encontra a biblioteca Boost e seus componentes necessários.
+find_package(Boost REQUIRED COMPONENTS asio system)
 
-# Mensagem de sucesso para confirmar que funcionou.
+# [CORREÇÃO FINAL] Instrui o CMake a preferir a versão ESTÁTICA da biblioteca Threads.
+set(Threads_PREFER_STATIC_LIBS ON)
+# Encontra a biblioteca de Threads (necessária para std::thread com MinGW).
+find_package(Threads REQUIRED)
+
+# Mensagem de sucesso para confirmar que o Boost foi encontrado.
 message(STATUS "Boost encontrado com sucesso: Versão ${Boost_VERSION_STRING}")
 
-# Cria e vincula o executável.
-add_executable(chatsys chat_server.cpp)
-target_link_libraries(chatsys PRIVATE 
+# --- CRIAR EXECUTÁVEIS ---
+# Define executáveis separados para o servidor e para o cliente.
+add_executable(servidor chat_server.cpp)
+add_executable(cliente chat_client.cpp)
+
+# --- VINCULAR BIBLIOTECAS ---
+# Vincula as bibliotecas necessárias para o SERVIDOR.
+target_link_libraries(servidor PRIVATE
     Boost::asio
-    ws2_32
+    Boost::system
+    ws2_32            # Biblioteca de Sockets do Windows
+    Threads::Threads  # Biblioteca de Threads (agora estática)
+)
+
+# Vincula as bibliotecas necessárias para o CLIENTE.
+target_link_libraries(cliente PRIVATE
+    Boost::asio
+    Boost::system
+    ws2_32            # Biblioteca de Sockets do Windows
+    Threads::Threads  # Biblioteca de Threads (agora estática)
 )

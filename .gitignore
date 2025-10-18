@@ -1,20 +1,61 @@
+# Build directories and files
 build/
-
-CMakeCache.txt
-CmakeFiles/
-cmake_install.cmake_install
-MakeFile
-
-.vscode/*
-!./vscode/tasks.json
-!.vscode/settings.json
-
-*.exe
-*.out
-*.dll
-*.lib
+out/
+bin/
+obj/
+*.o
+*.lo
+*.la
 *.so
 *.a
-*.o
-*.obj
+*.dll
+*.lib
+*.exe
+*.ilk
+*.pdb
+*.exp
+*.idb
+*.tlog
+*.ipch
+.cache/
+output/
 
+# CMake-specific
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+install_manifest.txt
+CTestTestfile.cmake
+_CPack_Packages/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.suo
+*.user
+*.ncb
+*.aps
+*.vs/
+*.VC.db
+*.VC.VC.opendb
+*.code-workspace
+
+# Doxygen
+html/
+latex/
+
+# Log files
+*.log
+
+# Dependency management (if applicable)
+# For example, if using Conan:
+conanbuildinfo.cmake
+conan_deps/
+
+# Miscellaneous
+*~
+*.bak
+*.swp
+*.swo
+.DS_Store
+Thumbs.db

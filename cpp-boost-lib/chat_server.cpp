@@ -1,53 +1,59 @@
 #include <iostream>
 #include <boost/asio.hpp>
 #include <thread>
+#include <vector>
 
 using boost::asio::ip::tcp;
 
-void handle_client(tcp::socket socket){
-    try{
+void handle_client(tcp::socket socket) {
+    try {
         char data[1024];
-        while (true)
-        {
+        while (true) {
             std::memset(data, 0, sizeof(data));
             boost::system::error_code error;
 
-            // ler a mensagem do client
             size_t length = socket.read_some(boost::asio::buffer(data), error);
-            if (error == boost::asio::error::eof)
-                break; // connection closed
-            else if (error) throw boost::system::system_error(error);
+            if (error == boost::asio::error::eof) {
+                std::cout << "Cliente desconectado." << std::endl;
+                break;
+            } else if (error) {
+                throw boost::system::system_error(error);
+            }
 
-            std::cout << "Cliente: " << data << std::endl;
-
-            // enviar uma resposta
-            std::string response;
-            std::cout << "You: ";
-            std::getline(std::cin, response);
+            std::cout << "Cliente (" << socket.remote_endpoint() << "): " << data << std::endl;
+            
+            // Simplesmente ecoa a mensagem de volta para o cliente.
+            // Em um chat real, você enviaria para outros clientes.
+            std::string response = "Mensagem recebida: ";
+            response += data;
             boost::asio::write(socket, boost::asio::buffer(response), error);
         }
-    }
-    catch (std::exception &e){
-        std::cerr << "Exception: " << e.what() << std::endl;
+    } catch (std::exception& e) {
+        std::cerr << "Excecao na thread do cliente: " << e.what() << std::endl;
     }
 }
 
-int main(){
-    try{
+int main() {
+    try {
         boost::asio::io_context io_context;
         tcp::acceptor acceptor(io_context, tcp::endpoint(tcp::v4(), 12345));
 
-        std::cout << "Servidor iniciado, esperando pelo cliente..." << std::endl;
+        std::cout << "Servidor iniciado na porta 12345, esperando por clientes..." << std::endl;
 
-        tcp::socket socket(io_context);
-        acceptor.accept(socket);
-        std::cout << "Cliente conectado!" << std::endl;
+        while (true) {
+            // Cria um novo socket para o próximo cliente.
+            tcp::socket socket(io_context);
+            // Espera bloqueado até um cliente se conectar.
+            acceptor.accept(socket);
+            
+            std::cout << "Cliente conectado: " << socket.remote_endpoint() << std::endl;
 
-        handle_client(std::move(socket));
+            // Cria uma nova thread para lidar com este cliente e a deixa rodando.
+            // O servidor principal volta imediatamente para esperar por outra conexão.
+            std::thread(handle_client, std::move(socket)).detach();
+        }
+    } catch (std::exception& e) {
+        std::cerr << "Excecao no servidor: " << e.what() << std::endl;
     }
-    catch (std::exception &e){
-        std::cerr << "Exception: " << e.what() << std::endl;
-    }
-
     return 0;
 }
